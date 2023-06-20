@@ -3,23 +3,14 @@
 --- Dependencies: `hop`, `nvim-treesitter`, and `nvim-treesitter-textobjects`.
 local hop = require("hop")
 local queries = require "nvim-treesitter.query"
-local ns = vim.api.nvim_create_namespace("sights")
+
+--- This is hacky, but use hop's highlight namespace
+--- so that the custom extmarks/highlights below clear
+--- properly when hop quits.
+local ns = vim.api.nvim_create_namespace("hop_hl")
 
 --- Highlight group for visualizing the target regions.
 vim.api.nvim_command('highlight default SightsPreview guibg=#262626 guifg=#888888')
-
---- TODO need a better solution here.
---- When hop quits without making a selection,
---- the SightsPreview highlight group isn't cleared.
---- There's no event or callback for when hop quits.
---- This is an inadequate hack to clear the SightsPreview
---- highlight group on `<esc>`, which is hop's default
---- quit button. The problems it that hop captures
---- the quit button, so you have to press `<esc>` twice:
---- once to quit hop, and once to clear the SightsPreview highlighting.
-vim.keymap.set('n', '<esc>', function()
-  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-end, {})
 
 --- Get the range of visible lines.
 local function visible_line_range()
